@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Fix Provider Profiles Policy</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4F46E5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #4338CA;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      overflow: auto;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    #manual-sql {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fix Provider Profiles INSERT Policy</h1>
+  <p>This tool will fix the "permission denied for table users" error by adding the missing INSERT policy for provider_profiles table.</p>
+  
+  <button id="fix-button">Apply Fix</button>
+  
+  <div id="result" style="margin-top: 20px;"></div>
+  
+  <div id="manual-sql">
+    <h2>SQL to run manually</h2>
+    <p>If the automatic fix doesn't work, copy and paste this SQL into your Supabase SQL Editor:</p>
+    <pre id="sql-code">-- Drop the policy if it exists (idempotent)
+DROP POLICY IF EXISTS "Provider can insert own profile" ON public.provider_profiles;
+
+-- Create the INSERT policy for provider_profiles
+CREATE POLICY "Provider can insert own profile"
+  ON public.provider_profiles FOR INSERT
+  WITH CHECK (user_id = auth.uid());</pre>
+  </div>
+
+  <script>
+    document.getElementById('fix-button').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = 'Applying fix...';
+      
+      try {
+        const response = await fetch('/api/fix-provider-profiles-policy');
+        const data = await response.json();
+        
+        if (data.success) {
+          resultDiv.innerHTML = `<p class="success">Success!</p><p>${data.message}</p>`;
+        } else {
+          resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+          document.getElementById('manual-sql').style.display = 'block';
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Failed to apply fix: ${error.message}</p>`;
+        document.getElementById('manual-sql').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,15 @@
+This is a placeholder for the Code of Conduct PDF document.
+
+In a production environment, this would be a properly formatted document detailing the behavioral standards expected from all service providers on the platform.
+
+The actual code of conduct would typically include sections covering:
+1. Professional Standards
+2. Customer Interactions
+3. Communication Requirements
+4. Service Quality Expectations
+5. Punctuality and Reliability
+6. Property Respect and Cleanliness
+7. Ethical Business Practices
+8. Conflict Resolution Procedures
+9. Reporting Violations
+10. Consequences for Non-Compliance 

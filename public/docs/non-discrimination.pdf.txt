@@ -1,0 +1,15 @@
+This is a placeholder for the Non-Discrimination Policy PDF document.
+
+In a production environment, this would be a properly formatted legal document outlining the commitment to providing services without discrimination of any kind.
+
+The actual policy would typically include sections covering:
+1. Protected Classes and Characteristics
+2. Scope of Application
+3. Service Delivery Standards
+4. Accommodation Requirements
+5. Reporting Procedures for Violations
+6. Investigation Processes
+7. Remediation and Discipline
+8. Training Requirements
+9. Compliance Monitoring
+10. Legal Basis and Regulatory References 

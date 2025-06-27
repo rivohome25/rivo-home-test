@@ -1,0 +1,230 @@
+# RivoHome - Smart Home Maintenance Platform
+
+## Project Overview
+
+RivoHome is a Next.js-based web application that serves as a smart home maintenance platform. The platform helps homeowners stay on top of seasonal maintenance tasks, find trusted professionals, and maintain their homes with confidence.
+
+**Live URL**: https://rivohome.com
+**Repository**: rivohome25/rivo-home-web
+**Framework**: Next.js 15.2.4 with TypeScript
+**Styling**: Tailwind CSS with custom brand colors
+**Deployment**: Vercel
+
+## Core Purpose
+
+RivoHome addresses the common problem of homeowners forgetting or neglecting regular home maintenance tasks. The platform provides:
+
+1. **Seasonal Maintenance Reminders**: Automated notifications for seasonal home care tasks
+2. **Professional Network**: Connection to trusted, vetted service providers
+3. **DIY Resources**: Educational content and video library for self-maintenance
+4. **Regional Customization**: Location-specific maintenance checklists and recommendations
+5. **Maintenance Calendar**: Personalized scheduling system for home care tasks
+
+## Target Audience
+
+- **Primary**: Homeowners who want to maintain their properties but struggle with organization and timing
+- **Secondary**: Service providers looking to connect with homeowners needing maintenance services
+- **Geographic Focus**: Initially targeting North American markets with regional customization
+
+## Technical Architecture
+
+### Framework & Dependencies
+- **Next.js 15.2.4**: App Router, TypeScript, Server Components
+- **React 19**: Latest React features with concurrent rendering
+- **Tailwind CSS**: Utility-first styling with custom brand configuration
+- **Framer Motion**: Animations and micro-interactions
+- **Radix UI**: Accessible component primitives
+- **Vercel Analytics**: Performance and user behavior tracking
+
+### Project Structure
+```
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout with metadata
+│   ├── page.tsx           # Homepage
+│   ├── sitemap.ts         # Dynamic sitemap generation
+│   ├── robots.ts          # SEO robots.txt
+│   ├── about/             # About page
+│   ├── how-it-works/      # How It Works page
+│   ├── providers/         # Service provider pages
+│   ├── resources/         # Resources and DIY content
+│   ├── dashboard/         # User dashboard (in development)
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── ui/               # Reusable UI components (Radix-based)
+│   ├── blog/             # Blog-specific components
+│   └── [feature-components] # Feature-specific components
+├── lib/                  # Utility functions and configurations
+├── hooks/                # Custom React hooks
+├── styles/               # Global styles and Tailwind config
+├── public/               # Static assets
+└── scripts/              # Build and utility scripts
+```
+
+## Brand Identity
+
+### Color Palette
+- **Primary Blue**: `rivo-base` (#2775A6)
+- **Light Blue**: `rivo-light` (#4A90C2)
+- **Dark Blue**: `rivo-dark` (#1E5A7A)
+- **Gradients**: Extensive use of blue gradients for visual appeal
+
+### Design Principles
+- **Clean & Modern**: Minimalist design with focus on usability
+- **Gradient-Heavy**: Brand gradients used throughout for visual consistency
+- **Mobile-First**: Responsive design prioritizing mobile experience
+- **Accessibility**: WCAG compliance with proper contrast ratios
+- **Micro-Interactions**: Subtle animations to enhance user experience
+
+## Key Features & Components
+
+### Homepage Components
+- **HomeHero**: Main hero section with primary CTA
+- **KeyFeaturesSection**: 7-tile grid showcasing platform benefits
+- **HowItWorksSection**: 3-step process explanation
+- **WaitlistCTASection**: Mailchimp-integrated signup form
+
+### Provider-Focused Components
+- **ProviderHero**: Service provider onboarding hero
+- **ProviderFeatures**: Benefits grid for service providers
+- **ProviderCTAForm**: Provider application form
+- **ProviderScheduleView**: Dashboard component for provider scheduling
+
+### Resource Components
+- **DiyVideoPreview**: YouTube video integration for DIY content
+- **DownloadChecklistModal**: Regional maintenance checklist downloads
+- **MaintenanceChecklistSection**: Interactive checklist features
+- **FAQSection**: Comprehensive FAQ with accordion interface
+
+### Utility Components
+- **LoadingScreen**: Animated loading screen with brand elements
+- **ContactFormModal**: Contact form with validation
+- **Navbar**: Responsive navigation with mobile menu
+- **Footer**: Comprehensive footer with contact and social links
+
+## Development Guidelines
+
+### Code Standards
+- **TypeScript**: Strict typing throughout the application
+- **Component Structure**: One component per file, clear naming conventions
+- **Props Interface**: All components have defined TypeScript interfaces
+- **Error Handling**: Comprehensive error boundaries and validation
+- **Performance**: Optimized images, lazy loading, and code splitting
+
+### Styling Conventions
+- **Tailwind Classes**: Utility-first approach with custom brand classes
+- **Responsive Design**: Mobile-first breakpoints (sm, md, lg, xl, 2xl)
+- **Animation**: Framer Motion for complex animations, CSS transitions for simple effects
+- **Consistency**: Standardized spacing, typography, and color usage
+
+### Form Integration
+- **Mailchimp**: All forms integrate with Mailchimp for lead capture
+- **Validation**: Client-side validation with proper error messaging
+- **User Types**: Forms differentiate between homeowners and service providers
+- **Regional Data**: Location-specific form fields and content
+
+## Current Development Status
+
+### Completed Features (95% Complete)
+- ✅ Core website structure and navigation
+- ✅ Homepage with all major sections
+- ✅ Provider onboarding flow
+- ✅ Resources and DIY content pages
+- ✅ Mailchimp form integration
+- ✅ Regional maintenance checklists
+- ✅ SEO optimization (sitemap, robots.txt, metadata)
+- ✅ Responsive design across all devices
+- ✅ Loading screens and micro-interactions
+- ✅ Contact forms and user communication
+
+### In Development
+- 🔄 Provider dashboard functionality
+- 🔄 User authentication system
+- 🔄 Advanced scheduling features
+- 🔄 Payment integration for premium features
+
+### Planned Features
+- 📋 Mobile app development
+- 📋 Advanced analytics dashboard
+- 📋 AI-powered maintenance recommendations
+- 📋 Integration with smart home devices
+- 📋 Expanded service provider network
+
+## API Structure
+
+### Current Endpoints
+- `/api/billing/` - Subscription and payment handling
+- `/api/subscribe-provider/` - Provider application processing
+- `/api/youtube/` - YouTube video integration for DIY content
+
+### Planned Endpoints
+- `/api/auth/` - User authentication
+- `/api/maintenance/` - Maintenance task management
+- `/api/notifications/` - Automated reminder system
+- `/api/providers/` - Provider management and matching
+
+## SEO & Marketing
+
+### SEO Strategy
+- **Target Keywords**: "home maintenance", "seasonal maintenance", "home care platform"
+- **Content Marketing**: DIY guides, maintenance tips, seasonal checklists
+- **Local SEO**: Regional customization for different markets
+- **Technical SEO**: Optimized sitemap, robots.txt, structured data
+
+### Conversion Optimization
+- **Waitlist Strategy**: Pre-launch email capture with Mailchimp
+- **A/B Testing**: Form variations and CTA optimization
+- **User Journey**: Optimized flow from awareness to signup
+- **Social Proof**: Testimonials and provider credentials
+
+## Security & Performance
+
+### Security Measures
+- **Input Validation**: All user inputs sanitized and validated
+- **CSP Headers**: Content Security Policy implementation
+- **Rate Limiting**: API endpoint protection
+- **Environment Variables**: Secure credential management
+
+### Performance Optimization
+- **Next.js Optimization**: Image optimization, code splitting, SSR
+- **Caching Strategy**: Static generation where possible
+- **CDN**: Vercel Edge Network for global performance
+- **Analytics**: Performance monitoring with Vercel Analytics
+
+## Integration Points
+
+### Third-Party Services
+- **Mailchimp**: Email marketing and lead capture
+- **YouTube**: DIY video content integration
+- **Vercel**: Hosting and deployment platform
+- **Google Analytics**: User behavior tracking (planned)
+
+### Future Integrations
+- **Stripe**: Payment processing for premium features
+- **Twilio**: SMS notifications for maintenance reminders
+- **Google Maps**: Service provider location services
+- **Weather APIs**: Weather-based maintenance recommendations
+
+## Development Workflow
+
+### Git Workflow
+- **Main Branch**: Production-ready code
+- **Dev Branch**: Development and testing
+- **Feature Branches**: Individual feature development
+- **Deployment**: Automatic deployment to Vercel on main branch push
+
+### Documentation
+- **progress.md**: Detailed development progress tracking
+- **todo.md**: Task management and priority tracking
+- **Component Documentation**: JSDoc comments for all public functions
+- **README Files**: Feature-specific documentation
+
+## Contact & Support
+
+- **Primary Contact**: info@rivohome.com
+- **Support**: support@rivohome.com
+- **Social Media**: @rivohome (Twitter/X)
+- **Development Team**: Available for technical questions and feature requests
+
+---
+
+This file serves as a comprehensive guide for AI systems working with the RivoHome codebase. It provides context for understanding the project's purpose, technical architecture, and development standards to enable more effective assistance and code generation. 

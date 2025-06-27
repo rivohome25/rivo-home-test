@@ -1,0 +1,427 @@
+/* Add this to enable smooth scrolling for the entire site */
+html {
+  scroll-behavior: smooth;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('/css/rivo-inputs.css');
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 215 25% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+
+    --primary: 224 80% 56%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 100% 97%;
+    --secondary-foreground: 215 25% 27%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 220 100% 97%;
+    --accent-foreground: 215 25% 27%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 80% 56%;
+
+    --radius: 0.75rem;
+
+    /* RivoHome brand colors as CSS variables */
+    --rivo-light: #53C1D0;
+    --rivo-base: #1D9DB7;
+    --rivo-dark: #126EA0;
+    --rivo-text-dark: #1F2937;
+    --rivo-text-light: #F9FAFB;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  /* Standard container */
+  .container {
+    @apply px-4 mx-auto max-w-7xl sm:px-6 lg:px-8;
+  }
+
+  /* Section spacing */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  /* Button hover effect */
+  .btn-hover-effect {
+    @apply transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px];
+  }
+
+  /* Brand gradient backgrounds */
+  .rivo-gradient {
+    background: linear-gradient(135deg, #53C1D0 0%, #1D9DB7 50%, #126EA0 100%);
+    color: white;
+  }
+
+  .rivo-gradient-light {
+    background: linear-gradient(135deg, rgba(83, 193, 208, 0.1) 0%, rgba(29, 157, 183, 0.1) 50%, rgba(18, 110, 160, 0.1) 100%);
+  }
+
+  /* Animated gradients */
+  .rivo-gradient-animated {
+    background: linear-gradient(135deg, #53C1D0 0%, #1D9DB7 50%, #126EA0 100%);
+    background-size: 200% 200%;
+    color: white;
+  }
+
+  /* Button with gradient */
+  .rivo-button {
+    @apply rounded-full px-6 py-2 font-medium text-white transition-all duration-300;
+    background: linear-gradient(135deg, #53C1D0 0%, #1D9DB7 50%, #126EA0 100%);
+  }
+
+  .rivo-button:hover {
+    @apply shadow-lg translate-y-[-2px];
+    background: linear-gradient(135deg, #47b0be 0%, #1a8ca3 50%, #105d87 100%);
+  }
+
+  /* Text colors */
+  .text-rivo-dark {
+    color: #126EA0;
+  }
+
+  .text-rivo-light {
+    color: #F9FAFB;
+  }
+
+  /* Card with white background */
+  .rivo-card {
+    @apply bg-white rounded-xl shadow-md overflow-hidden;
+  }
+
+  /* Gradient border */
+  .rivo-border {
+    position: relative;
+  }
+
+  .rivo-border::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(135deg, #53C1D0 0%, #1D9DB7 50%, #126EA0 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .rivo-border:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* === ENTERPRISE ADMIN DASHBOARD COMPONENTS === */
+  
+  /* Enterprise KPI Card */
+  .enterprise-kpi-card {
+    @apply bg-white rounded-2xl p-6 shadow-enterprise hover:shadow-enterprise-lg transition-all duration-300 border border-slate-100;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .enterprise-kpi-card:hover {
+    @apply transform translate-y-[-2px];
+  }
+
+  /* Enterprise Action Button */
+  .enterprise-action-btn {
+    @apply relative overflow-hidden bg-white rounded-xl p-4 border border-slate-200 transition-all duration-300 hover:shadow-enterprise-lg hover:border-rivo-500/30;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .enterprise-action-btn:hover {
+    @apply transform translate-y-[-1px] scale-[1.02];
+  }
+
+  .enterprise-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(29, 157, 183, 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .enterprise-action-btn:hover::before {
+    left: 100%;
+  }
+
+  /* Enterprise Primary Button */
+  .enterprise-btn-primary {
+    @apply inline-flex items-center px-6 py-3 rounded-xl font-medium text-white transition-all duration-300 shadow-lg hover:shadow-xl;
+    background: linear-gradient(135deg, #1D9DB7 0%, #126EA0 100%);
+  }
+
+  .enterprise-btn-primary:hover {
+    @apply transform translate-y-[-2px] scale-[1.02];
+    background: linear-gradient(135deg, #1a8ca3 0%, #105d87 100%);
+  }
+
+  /* Enterprise Success Button */
+  .enterprise-btn-success {
+    @apply inline-flex items-center px-4 py-2 rounded-lg font-medium text-white transition-all duration-300;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  .enterprise-btn-success:hover {
+    @apply transform translate-y-[-1px] shadow-lg;
+  }
+
+  /* Enterprise Warning Button */
+  .enterprise-btn-warning {
+    @apply inline-flex items-center px-4 py-2 rounded-lg font-medium text-white transition-all duration-300;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  .enterprise-btn-warning:hover {
+    @apply transform translate-y-[-1px] shadow-lg;
+  }
+
+  /* Enterprise Badge */
+  .enterprise-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .enterprise-badge-success {
+    @apply enterprise-badge bg-enterprise-success-50 text-enterprise-success-900 border border-enterprise-success-500/20;
+  }
+
+  .enterprise-badge-warning {
+    @apply enterprise-badge bg-enterprise-warning-50 text-enterprise-warning-900 border border-enterprise-warning-500/20;
+  }
+
+  .enterprise-badge-error {
+    @apply enterprise-badge bg-enterprise-error-50 text-enterprise-error-900 border border-enterprise-error-500/20;
+  }
+
+  .enterprise-badge-info {
+    @apply enterprise-badge bg-enterprise-info-50 text-enterprise-info-900 border border-enterprise-info-500/20;
+  }
+
+  /* Enterprise Navigation Card */
+  .enterprise-nav-card {
+    @apply bg-white rounded-2xl p-6 shadow-enterprise hover:shadow-enterprise-xl transition-all duration-400 border border-slate-100 cursor-pointer;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .enterprise-nav-card:hover {
+    @apply transform translate-y-[-4px] border-rivo-500/30;
+  }
+
+  /* Enterprise Header */
+  .enterprise-header {
+    @apply relative overflow-hidden rounded-2xl p-8 text-white;
+    background: linear-gradient(135deg, #1D9DB7 0%, #126EA0 50%, #0f3460 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease-in-out infinite;
+  }
+
+  .enterprise-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
+  }
+
+  /* Activity Feed Item */
+  .activity-item {
+    @apply flex items-start space-x-3 p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200;
+  }
+
+  .activity-item-new {
+    @apply activity-item bg-rivo-50 border-rivo-200;
+  }
+
+  /* Status Indicators */
+  .status-indicator {
+    @apply inline-flex items-center justify-center w-3 h-3 rounded-full;
+  }
+
+  .status-indicator-online {
+    @apply status-indicator bg-enterprise-success-500;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  }
+
+  .status-indicator-warning {
+    @apply status-indicator bg-enterprise-warning-500;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  }
+
+  .status-indicator-offline {
+    @apply status-indicator bg-slate-400;
+  }
+
+  /* Metric Counter Animation */
+  .metric-counter {
+    @apply font-bold text-3xl;
+    animation: counter-up 0.8s ease-out;
+  }
+
+  /* Loading Skeleton */
+  .skeleton {
+    @apply animate-pulse bg-slate-200 rounded;
+  }
+
+  .skeleton-text {
+    @apply skeleton h-4 mb-2;
+  }
+
+  .skeleton-title {
+    @apply skeleton h-6 mb-4;
+  }
+
+  /* Shimmer Effect */
+  .shimmer {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Glass Effect */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  /* Trend Indicators */
+  .trend-up {
+    @apply inline-flex items-center text-enterprise-success-600;
+  }
+
+  .trend-down {
+    @apply inline-flex items-center text-enterprise-error-600;
+  }
+
+  .trend-neutral {
+    @apply inline-flex items-center text-slate-500;
+  }
+}
+
+.section-alt {
+  @apply bg-[#EDF3FF];
+}
+
+.success-gradient {
+  background: linear-gradient(135deg, #53C1D0 0%, #1D9DB7 100%);
+}
+
+/* RivoHome brand gradient */
+.rivo-brand-gradient {
+  background: linear-gradient(135deg, #53C1D0 0%, #1D9DB7 50%, #126EA0 100%);
+  background-size: 200% 200%;
+}
+
+/* Navbar specific styles */
+.nav-scrolled {
+  background: linear-gradient(135deg, rgba(83, 193, 208, 0.95) 0%, rgba(29, 157, 183, 0.95) 50%, rgba(18, 110, 160, 0.95) 100%);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-transparent {
+  background-color: transparent;
+  border-color: transparent;
+  color: white;
+}
+
+.nav-link {
+  @apply text-white hover:text-white/80 transition-colors duration-200 flex items-center;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.nav-link:hover {
+  @apply text-white/80;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Mobile menu animation */
+.mobile-menu-enter {
+  opacity: 0;
+  transform: translateY(-1rem);
+}
+
+.mobile-menu-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.mobile-menu-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-menu-exit-active {
+  opacity: 0;
+  transform: translateY(-1rem);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+}
+
+/* Gradient animation for navbar and hero sections */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
