@@ -71,138 +71,107 @@ export function NewsletterSection({
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{headline}</h2>
+          <p className="text-lg md:text-xl text-white/90 mb-8">{description}</p>
+          
           <form
             action="https://rivohome.us5.list-manage.com/subscribe/post?u=fa369b4510f97d8cd57991776&amp;id=ceb106b932&amp;f_id=0090f6e0f0"
             method="post"
             id="mc-embedded-subscribe-form"
             name="mc-embedded-subscribe-form"
             target="_blank"
-            className="flex flex-col items-center gap-4 justify-center max-w-md mx-auto"
+            className="max-w-md mx-auto"
             noValidate
           >
-            <input
-              type="email"
-              name="EMAIL"
-              id="mce-EMAIL"
-              placeholder="Your email address"
-              required
-              className="w-full px-4 py-2 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-white"
-            />
-            
-            <select
-              name="MMERGE8"
-              id="mce-MMERGE8"
-              required
-              className="w-full px-4 py-2 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-white"
-            >
-              <option value="">Select One *</option>
-              <option value="Homeowner">Homeowner</option>
-              <option value="Service Provider">Service Provider</option>
-              <option value="Realtor">Realtor</option>
-              <option value="Other">Other</option>
-            </select>
-            
-            {/* Required for Mailchimp bot protection */}
-            <div style={{ position: 'absolute', left: '-5000px' }} aria-hidden="true">
-              <input type="text" name="b_fa369b4510f97d8cd57991776_ceb106b932" tabIndex={-1} />
-            </div>
-
-            <button
-              type="submit"
-              name="subscribe"
-              id="mc-embedded-subscribe"
-              className="w-full bg-white text-rivo-base px-6 py-2 rounded-md font-medium hover:bg-gray-100 transition"
-            >
-              <div id="mc_embed_signup_scroll" className="space-y-6">
-                <div className="indicates-required text-white/80 text-sm mb-6">
-                  <span className="asterisk text-white">*</span> indicates required
-                </div>
-                
-                <div className="mc-field-group">
-                  <label htmlFor="mce-EMAIL" className="block text-white font-medium mb-2 text-left">
-                    Email Address <span className="asterisk text-white">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="EMAIL"
-                    className="required email w-full px-4 py-3 rounded-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rivo-base transition-all duration-200 text-base"
-                    id="mce-EMAIL"
-                    required
-                    placeholder="Enter your email address"
-                  />
-                </div>
-                
-                <div className="mc-field-group">
-                  <label htmlFor="mce-MMERGE8" className="block text-white font-medium mb-2 text-left">
-                    Select One <span className="asterisk text-white">*</span>
-                  </label>
-                  <select
-                    name="MMERGE8"
-                    className="required w-full px-4 py-3 rounded-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rivo-base appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-12 transition-all duration-200 text-base"
-                    id="mce-MMERGE8"
-                    required
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 16px center'
-                    }}
-                  >
-                    <option value="">Please select one</option>
-                    <option value="Homeowner">Homeowner</option>
-                    <option value="Service Provider">Service Provider</option>
-                    <option value="Realtor">Realtor</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                
-                <div className="mc-field-group">
-                  <label htmlFor="mce-MESSAGE" className="block text-white font-medium mb-2 text-left">
-                    If Other selected, please indicate who you are:
-                  </label>
-                  <input
-                    type="text"
-                    name="MESSAGE"
-                    className="text w-full px-4 py-3 rounded-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rivo-base transition-all duration-200 text-base"
-                    id="mce-MESSAGE"
-                    placeholder="Please specify your role or profession"
-                  />
-                </div>
-                
-                <div id="mce-responses" className="clear">
-                  <div className="response" id="mce-error-response" style={{ display: 'none' }}></div>
-                  <div className="response" id="mce-success-response" style={{ display: 'none' }}></div>
-                </div>
-                
-                <div aria-hidden="true" style={{ position: 'absolute', left: '-5000px' }}>
-                  <input type="text" name="b_fa369b4510f97d8cd57991776_ceb106b932" tabIndex={-1} value="" readOnly />
-                </div>
-                
-                <div className="clear pt-4 flex justify-center">
-                  <motion.button
-                    type="submit"
-                    name="subscribe"
-                    id="mc-embedded-subscribe"
-                    className="button w-full bg-white text-rivo-base px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-50 hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Sign Up
-                  </motion.button>
-                </div>
+            <div id="mc_embed_signup_scroll" className="space-y-6">
+              <div className="indicates-required text-white/80 text-sm mb-6">
+                <span className="asterisk text-white">*</span> indicates required
               </div>
-            </form>
-            
-            <p className="mt-6 text-sm text-white/80">
-              By signing up, you agree to our{" "}
-              <a href="/terms" className="underline hover:text-white transition-colors">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="/privacy" className="underline hover:text-white transition-colors">
-                Privacy Policy
-              </a>
-              .
-            </p>
-          </motion.div>
+              
+              <div className="mc-field-group">
+                <label htmlFor="mce-EMAIL" className="block text-white font-medium mb-2 text-left">
+                  Email Address <span className="asterisk text-white">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="EMAIL"
+                  className="required email w-full px-4 py-3 rounded-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rivo-base transition-all duration-200 text-base"
+                  id="mce-EMAIL"
+                  required
+                  placeholder="Enter your email address"
+                />
+              </div>
+              
+              <div className="mc-field-group">
+                <label htmlFor="mce-MMERGE8" className="block text-white font-medium mb-2 text-left">
+                  Select One <span className="asterisk text-white">*</span>
+                </label>
+                <select
+                  name="MMERGE8"
+                  className="required w-full px-4 py-3 rounded-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rivo-base appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-12 transition-all duration-200 text-base"
+                  id="mce-MMERGE8"
+                  required
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: 'right 16px center'
+                  }}
+                >
+                  <option value="">Please select one</option>
+                  <option value="Homeowner">Homeowner</option>
+                  <option value="Service Provider">Service Provider</option>
+                  <option value="Realtor">Realtor</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              <div className="mc-field-group">
+                <label htmlFor="mce-MESSAGE" className="block text-white font-medium mb-2 text-left">
+                  If Other selected, please indicate who you are:
+                </label>
+                <input
+                  type="text"
+                  name="MESSAGE"
+                  className="text w-full px-4 py-3 rounded-lg text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rivo-base transition-all duration-200 text-base"
+                  id="mce-MESSAGE"
+                  placeholder="Please specify your role or profession"
+                />
+              </div>
+              
+              <div id="mce-responses" className="clear">
+                <div className="response" id="mce-error-response" style={{ display: 'none' }}></div>
+                <div className="response" id="mce-success-response" style={{ display: 'none' }}></div>
+              </div>
+              
+              <div aria-hidden="true" style={{ position: 'absolute', left: '-5000px' }}>
+                <input type="text" name="b_fa369b4510f97d8cd57991776_ceb106b932" tabIndex={-1} value="" readOnly />
+              </div>
+              
+              <div className="clear pt-4 flex justify-center">
+                <motion.button
+                  type="submit"
+                  name="subscribe"
+                  id="mc-embedded-subscribe"
+                  className="button w-full bg-white text-rivo-base px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-50 hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Sign Up
+                </motion.button>
+              </div>
+            </div>
+          </form>
+          
+          <p className="mt-6 text-sm text-white/80">
+            By signing up, you agree to our{" "}
+            <a href="/terms" className="underline hover:text-white transition-colors">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="underline hover:text-white transition-colors">
+              Privacy Policy
+            </a>
+            .
+          </p>
         </motion.div>
       </div>
     </section>

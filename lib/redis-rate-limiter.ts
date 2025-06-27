@@ -1,9 +1,8 @@
 /**
  * @file redis-rate-limiter.ts
- * @description Enterprise-grade Redis-backed rate limiting
+ * @description Enterprise-grade Redis-backed rate limiting (Edge Runtime compatible)
  */
 
-import { createClient } from 'redis';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RateLimitConfig {
@@ -25,11 +24,18 @@ interface RateLimitResponse {
 
 class RedisRateLimiter {
   private static instance: RedisRateLimiter;
-  private client: ReturnType<typeof createClient> | null = null;
+  private isEdgeRuntime: boolean;
   private fallbackStore = new Map<string, { count: number; resetTime: number }>();
 
   private constructor() {
-    this.initRedis();
+    // Check if we're in Edge Runtime
+    this.isEdgeRuntime = typeof EdgeRuntime !== 'undefined';
+    
+    if (this.isEdgeRuntime) {
+      console.log('🔄 Using in-memory rate limiting (Edge Runtime)');
+    } else {
+      console.log('🔄 Redis rate limiter initialized (Node.js Runtime)');
+    }
   }
 
   static getInstance(): RedisRateLimiter {
@@ -37,36 +43,6 @@ class RedisRateLimiter {
       RedisRateLimiter.instance = new RedisRateLimiter();
     }
     return RedisRateLimiter.instance;
-  }
-
-  private async initRedis(): Promise<void> {
-    try {
-      // Use Redis if available, fallback to in-memory
-      const redisUrl = process.env.REDIS_URL || process.env.UPSTASH_REDIS_REST_URL;
-      
-      if (redisUrl) {
-        this.client = createClient({
-          url: redisUrl,
-          socket: {
-            connectTimeout: 5000,
-            commandTimeout: 5000,
-          }
-        });
-        
-        this.client.on('error', (err) => {
-          console.warn('Redis rate limiter error, falling back to memory:', err.message);
-          this.client = null;
-        });
-        
-        await this.client.connect();
-        console.log('✅ Redis rate limiter connected');
-      } else {
-        console.warn('⚠️ No Redis URL found, using in-memory rate limiting');
-      }
-    } catch (error) {
-      console.warn('Redis connection failed, using in-memory fallback:', error);
-      this.client = null;
-    }
   }
 
   private getClientIP(request: NextRequest): string {
@@ -97,13 +73,14 @@ class RedisRateLimiter {
       : this.defaultKeyGenerator(request);
     
     const now = Date.now();
-    const windowStart = now - config.windowMs;
     
     try {
-      if (this.client) {
-        return await this.checkRedisRateLimit(key, config, now, windowStart);
+      if (this.isEdgeRuntime) {
+        // Always use in-memory for Edge Runtime
+        return this.checkMemoryRateLimit(key, config, now);
       } else {
-        return this.checkMemoryRateLimit(key, config, now, windowStart);
+        // Try Redis in Node.js runtime, fallback to memory
+        return await this.checkRedisOrFallback(key, config, now);
       }
     } catch (error) {
       console.error('Rate limiting error:', error);
@@ -118,41 +95,77 @@ class RedisRateLimiter {
     }
   }
 
-  private async checkRedisRateLimit(
+  private async checkRedisOrFallback(
+    key: string,
+    config: RateLimitConfig,
+    now: number
+  ): Promise<RateLimitResponse> {
+    // Try using Redis with REST API (Upstash compatible)
+    const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+    
+    if (redisUrl && redisToken) {
+      try {
+        return await this.checkUpstashRedis(key, config, now, redisUrl, redisToken);
+      } catch (error) {
+        console.warn('Upstash Redis failed, falling back to memory:', error);
+      }
+    }
+    
+    // Fallback to memory
+    return this.checkMemoryRateLimit(key, config, now);
+  }
+
+  private async checkUpstashRedis(
     key: string,
     config: RateLimitConfig,
     now: number,
-    windowStart: number
+    redisUrl: string,
+    redisToken: string
   ): Promise<RateLimitResponse> {
-    if (!this.client) throw new Error('Redis client not available');
+    const windowStart = now - config.windowMs;
+    
+    // Use Redis REST API for Edge Runtime compatibility
+    const headers = {
+      'Authorization': `Bearer ${redisToken}`,
+      'Content-Type': 'application/json',
+    };
 
-    // Use Redis pipeline for atomic operations
-    const pipeline = this.client.multi();
+    // Create pipeline commands
+    const pipeline = [
+      ['ZREMRANGEBYSCORE', key, 0, windowStart],
+      ['ZCARD', key],
+      ['ZADD', key, now, `${now}-${Math.random()}`],
+      ['EXPIRE', key, Math.ceil(config.windowMs / 1000)]
+    ];
+
+    const response = await fetch(`${redisUrl}/pipeline`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(pipeline)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Redis request failed: ${response.status}`);
+    }
+
+    const results = await response.json();
     
-    // Remove expired entries
-    pipeline.zRemRangeByScore(key, 0, windowStart);
-    
-    // Count current requests
-    pipeline.zCard(key);
-    
-    // Add current request
-    pipeline.zAdd(key, { score: now, value: `${now}-${Math.random()}` });
-    
-    // Set expiration
-    pipeline.expire(key, Math.ceil(config.windowMs / 1000));
-    
-    const results = await pipeline.exec();
-    
-    if (!results) throw new Error('Redis pipeline failed');
-    
-    const currentCount = (results[1] as number) + 1; // +1 for the request we just added
+    if (!Array.isArray(results) || results.length < 2) {
+      throw new Error('Invalid Redis response');
+    }
+
+    const currentCount = (results[1].result || 0) + 1; // +1 for the request we just added
     const resetTime = new Date(now + config.windowMs);
     
     const success = currentCount <= config.limit;
     
     if (!success) {
       // Remove the request we just added since we're rejecting it
-      await this.client.zRem(key, `${now}-${Math.random()}`);
+      await fetch(`${redisUrl}/ZREM/${key}/${now}-${Math.random()}`, {
+        method: 'POST',
+        headers
+      });
     }
     
     return {
@@ -167,9 +180,19 @@ class RedisRateLimiter {
   private checkMemoryRateLimit(
     key: string,
     config: RateLimitConfig,
-    now: number,
-    windowStart: number
+    now: number
   ): RateLimitResponse {
+    // Clean up expired entries (only keep last 1000 to prevent memory leaks)
+    if (this.fallbackStore.size > 1000) {
+      const entries = Array.from(this.fallbackStore.entries());
+      entries.sort((a, b) => a[1].resetTime - b[1].resetTime);
+      
+      // Remove oldest 200 entries
+      for (let i = 0; i < 200; i++) {
+        this.fallbackStore.delete(entries[i][0]);
+      }
+    }
+    
     // Clean up expired entries
     for (const [k, v] of this.fallbackStore.entries()) {
       if (v.resetTime < now) {
@@ -198,108 +221,109 @@ class RedisRateLimiter {
     };
   }
 
-  async logRateLimitViolation(
+  // Enhanced logging for rate limit events
+  async logRateLimit(
     request: NextRequest,
     config: RateLimitConfig,
     result: RateLimitResponse
   ): Promise<void> {
     const ip = this.getClientIP(request);
     const userAgent = request.headers.get('user-agent') || 'unknown';
-    const path = request.nextUrl.pathname;
     
-    console.warn('🚨 Rate limit exceeded:', {
-      ip,
-      path,
-      userAgent,
-      limit: result.limit,
-      current: result.current,
-      timestamp: new Date().toISOString()
-    });
-    
-    // TODO: Integrate with your security monitoring system
-    // await securityMonitoring.alert('RATE_LIMIT_EXCEEDED', { ip, path, userAgent });
+    if (!result.success) {
+      console.warn(`🚫 Rate limit exceeded`, {
+        ip,
+        path: request.nextUrl.pathname,
+        method: request.method,
+        userAgent: userAgent.substring(0, 100),
+        limit: result.limit,
+        current: result.current,
+        resetTime: result.resetTime.toISOString(),
+        timestamp: new Date().toISOString()
+      });
+    } else if (result.remaining <= Math.ceil(config.limit * 0.1)) {
+      // Warn when approaching rate limit (90% used)
+      console.warn(`⚠️ Rate limit warning`, {
+        ip,
+        path: request.nextUrl.pathname,
+        limit: result.limit,
+        remaining: result.remaining,
+        timestamp: new Date().toISOString()
+      });
+    }
   }
 }
 
-export const rateLimiter = RedisRateLimiter.getInstance();
-
-/**
- * Middleware function for rate limiting
- */
+// Rate limiting middleware factory
 export async function rateLimit(
   request: NextRequest,
   config: RateLimitConfig
 ): Promise<NextResponse | null> {
-  const result = await rateLimiter.checkRateLimit(request, config);
+  const limiter = RedisRateLimiter.getInstance();
+  const result = await limiter.checkRateLimit(request, config);
+  
+  // Log the rate limit check
+  await limiter.logRateLimit(request, config, result);
   
   if (!result.success) {
-    await rateLimiter.logRateLimitViolation(request, config, result);
-    
-    const retryAfter = Math.ceil((result.resetTime.getTime() - Date.now()) / 1000);
-    
-    return NextResponse.json(
+    const response = NextResponse.json(
       { 
-        error: config.message || 'Too many requests, please try again later.',
-        retryAfter 
+        error: config.message || 'Too many requests',
+        limit: result.limit,
+        remaining: result.remaining,
+        resetTime: result.resetTime.toISOString()
       },
-      {
-        status: 429,
-        headers: {
-          'Retry-After': retryAfter.toString(),
-          'X-RateLimit-Limit': result.limit.toString(),
-          'X-RateLimit-Remaining': result.remaining.toString(),
-          'X-RateLimit-Reset': Math.ceil(result.resetTime.getTime() / 1000).toString(),
-        }
-      }
+      { status: 429 }
     );
+    
+    // Add rate limit headers
+    response.headers.set('X-RateLimit-Limit', result.limit.toString());
+    response.headers.set('X-RateLimit-Remaining', result.remaining.toString());
+    response.headers.set('X-RateLimit-Reset', Math.ceil(result.resetTime.getTime() / 1000).toString());
+    response.headers.set('Retry-After', Math.ceil(config.windowMs / 1000).toString());
+    
+    return response;
   }
   
-  return null;
+  return null; // Allow request to proceed
 }
 
-/**
- * Rate limiting configurations for different endpoint types
- */
-export const RATE_LIMIT_CONFIGS = {
-  // Authentication endpoints - very strict
+// Predefined rate limit configurations
+export const rateLimitConfigs = {
+  // Very strict for sensitive endpoints
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 5, // 5 attempts per 15 minutes
-    message: 'Too many authentication attempts. Please try again in 15 minutes.',
+    limit: 5,
+    message: 'Too many authentication attempts'
   },
   
-  // Password reset - prevent abuse
-  passwordReset: {
-    windowMs: 60 * 60 * 1000, // 1 hour
-    limit: 3, // 3 attempts per hour
-    message: 'Too many password reset requests. Please try again in 1 hour.',
+  // Moderate for API endpoints
+  api: {
+    windowMs: 15 * 60 * 1000, // 15 minutes  
+    limit: 100,
+    message: 'API rate limit exceeded'
   },
   
-  // File uploads - prevent abuse
-  fileUpload: {
+  // Lenient for general pages
+  general: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 1000,
+    message: 'Too many requests'
+  },
+  
+  // Strict for booking operations
+  booking: {
     windowMs: 60 * 60 * 1000, // 1 hour
-    limit: 20, // 20 uploads per hour
-    message: 'Too many file uploads. Please try again later.',
+    limit: 10,
+    message: 'Too many booking attempts'
   },
   
   // Admin endpoints - very strict
   admin: {
-    windowMs: 5 * 60 * 1000, // 5 minutes
-    limit: 10, // 10 requests per 5 minutes
-    message: 'Admin endpoint rate limit exceeded.',
-  },
-  
-  // API endpoints - moderate
-  api: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, // 100 requests per 15 minutes
-    message: 'API rate limit exceeded. Please try again later.',
-  },
-  
-  // General web pages - generous
-  general: {
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 1000, // 1000 requests per 15 minutes
-    message: 'Too many requests. Please try again later.',
+    limit: 50,
+    message: 'Admin rate limit exceeded'
   }
-};
+} as const;
+
+export default RedisRateLimiter;
