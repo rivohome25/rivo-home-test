@@ -1,13 +1,12 @@
 {
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
   "framework": "nextjs",
-  "buildCommand": "next build",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "packageManager": "npm@10.x"
-      }
+  "functions": {
+    "app/api/**": {
+      "maxDuration": 30
     }
-  ]
+  },
+  "env": {
+    "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+  }
 } 
