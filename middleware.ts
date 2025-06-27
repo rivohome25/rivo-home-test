@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { rateLimit } from '@/lib/redis-rate-limiter';
+import { rateLimit } from './lib/redis-rate-limiter';
 
 // Add protected routes that require authentication
 const protectedRoutes = ['/dashboard', '/complete-profile', '/onboarding', '/settings', '/dashboard/diy-library'];
